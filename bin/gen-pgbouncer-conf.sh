@@ -3,6 +3,7 @@
 POSTGRES_URLS=${PGBOUNCER_URLS:-DATABASE_URL}
 POOL_MODE=${PGBOUNCER_POOL_MODE:-transaction}
 SERVER_RESET_QUERY=${PGBOUNCER_SERVER_RESET_QUERY}
+CONNECT_QUERY="${PGBOUNCER_CONNECT_QUERY:-SELECT 1}"
 n=1
 
 # if the SERVER_RESET_QUERY and pool mode is session, pgbouncer recommends DISCARD ALL be the default
@@ -29,6 +30,7 @@ default_pool_size = ${PGBOUNCER_DEFAULT_POOL_SIZE:-5}
 min_pool_size = ${PGBOUNCER_MIN_POOL_SIZE:-0}
 reserve_pool_size = ${PGBOUNCER_RESERVE_POOL_SIZE:-1}
 reserve_pool_timeout = ${PGBOUNCER_RESERVE_POOL_TIMEOUT:-5.0}
+max_user_connections = ${PGBOUNCER_MAX_USER_CONNECTIONS:-50}
 server_lifetime = ${PGBOUNCER_SERVER_LIFETIME:-1800}
 server_idle_timeout = ${PGBOUNCER_SERVER_IDLE_TIMEOUT:-300}
 log_connections = ${PGBOUNCER_LOG_CONNECTIONS:-0}
@@ -64,7 +66,7 @@ do
 EOFEOF
 
   cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
-$CLIENT_DB_NAME= host=$DB_HOST port=$DB_PORT dbname=$DB_NAME
+$CLIENT_DB_NAME= host=$DB_HOST port=$DB_PORT dbname=$DB_NAME connect_query="${CONNECT_QUERY}"
 EOFEOF
 
   let "n += 1"
